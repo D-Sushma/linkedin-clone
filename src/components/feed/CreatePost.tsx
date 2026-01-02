@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Avatar from '../common/Avatar';
 import { usePosts } from '@/hooks/usePosts';
 
@@ -18,15 +18,19 @@ export default function CreatePost() {
       await addPost(content, image || undefined);
       setContent('');
       setImage('');
-      setContent('');
       setMessage('Post created successfully');
-     
     }
   };
 
-  setTimeout(() => {
-    setMessage('');
-  }, 3000);
+  // Clear message after 3 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">

@@ -45,7 +45,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { Post } from '@/types';
 
@@ -91,6 +91,7 @@ export function usePosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hasFetchedRef = useRef(false);
 
 
   // Get token from localStorage
@@ -281,8 +282,13 @@ export function usePosts() {
 
   // Fetch posts on mount - automatically load posts when hook is used
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    // Prevent multiple fetches in React Strict Mode or re-renders
+    if (!hasFetchedRef.current) {
+      hasFetchedRef.current = true;
+      fetchPosts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
