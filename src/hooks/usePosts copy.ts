@@ -50,8 +50,7 @@ import axios from 'axios';
 import { Post } from '@/types';
 
 // const API_URL = 'http://localhost:5000/api';
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-const API_URL = `${BASE_URL.replace(/\/$/, '')}/api`;
+const API_URL = process.env.NEXT_PUBLIC_API_URL + '/api';
 
 // Backend response types
 interface BackendAuthor {
@@ -101,34 +100,6 @@ export function usePosts() {
     return null;
   };
 
-  // Get current user ID from token
-  const getCurrentUserId = () => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('linkedin_token');
-      if (!token) return null;
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.id;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  };
-
-  // Format timestamp
-  const formatTimestamp = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-    return date.toLocaleDateString();
-  };
-
   // Fetch all posts
   const fetchPosts = useCallback(async () => {
     setIsLoading(true);
@@ -141,6 +112,7 @@ export function usePosts() {
           ...(token && { Authorization: `Bearer ${token}` }),
         },
       });
+      // console.log("fetch posts response...", response);
       
       if (response.data.success) {
         // Transform backend post format to frontend format
@@ -173,6 +145,34 @@ export function usePosts() {
     }
   }, []);
 
+  // Get current user ID from token
+  const getCurrentUserId = () => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('linkedin_token');
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  // Format timestamp
+  const formatTimestamp = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    return date.toLocaleDateString();
+  };
+
   // Create new post
   const addPost = async (content: string, image?: string) => {
     const token = getToken();
@@ -190,12 +190,32 @@ export function usePosts() {
           Authorization: `Bearer ${token}`,
         },
       });
+      // console.log("add post response...", response.data);
       if (response.data.success) {
-        // Automatically refresh posts list from backend after successful post creation
-        console.log('Post created successfully, fetching updated posts...');
-        await fetchPosts();
-        console.log('Posts refreshed successfully');
-        return response.data.data;
+        // // Transform and add to posts
+        // const newPost = {
+        //   id: response.data.data._id,
+        //   author: {
+        //     id: response.data.data.author._id,
+        //     name: response.data.data.author.name,
+        //     title: response.data.data.author.title || '',
+        //     location: response.data.data.author.location || '',
+        //     avatar: response.data.data.author.avatar || '👤',
+        //     connections: response.data.data.author.connections || 0,
+        //   },
+        //   content: response.data.data.content,
+        //   image: response.data.data.image || undefined,
+        //   likes: 0,
+        //   comments: 0,
+        //   shares: 0,
+        //   timestamp: 'Just now',
+        //   liked: false,
+        // };
+        // setPosts([newPost, ...posts]);
+        // return newPost;
+         // Automatically refresh posts list from backend after successful post creation
+         await fetchPosts();
+         return response.data.data;
       } else {
         setError(response.data.message || 'Failed to create post');
       }
@@ -226,16 +246,16 @@ export function usePosts() {
       
       if (response.data.success) {
         // Update the post in the list
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        return {
-          ...post,
+        setPosts(posts.map(post => {
+          if (post.id === postId) {
+            return {
+              ...post,
               likes: response.data.data.likes?.length || 0,
               liked: response.data.data.likes?.some((like: BackendLike) => like._id === getCurrentUserId()) || false,
-        };
-      }
-      return post;
-    }));
+            };
+          }
+          return post;
+        }));
       }
     } catch (err) {
       const error = err as ApiError;
@@ -279,16 +299,9 @@ export function usePosts() {
     }
   };
 
-  // Fetch posts on mount - automatically load posts when hook is used
+  // Fetch posts on mount
   useEffect(() => {
     fetchPosts();
-  }, [fetchPosts]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchPosts();
-    }, 5000);
-    return () => clearInterval(interval);
   }, [fetchPosts]);
 
   return {

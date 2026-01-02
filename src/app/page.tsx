@@ -20,7 +20,7 @@ export default function Home() {
     const loadPosts = async () => {
       try {
         setIsLoading(true);
-        const fetchedPosts = await fetchPostsFromAPI(30);
+        const fetchedPosts = await fetchPostsFromAPI(5);
         setPosts(fetchedPosts);
         setError(null);
       } catch (err) {
