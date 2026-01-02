@@ -284,12 +284,12 @@ export function usePosts() {
     fetchPosts();
   }, [fetchPosts]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchPosts();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [fetchPosts]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     fetchPosts();
+  //   }, 5000);
+  //   return () => clearInterval(interval);
+  // }, [fetchPosts]);
 
   return {
     posts,
