@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { users } from '@/lib/data';
 import Navbar from '@/components/layout/Navbar';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -5,8 +9,11 @@ import AboutSection from '@/components/profile/AboutSection';
 import ProfileInfo from '@/components/profile/ProfileInfo';
 import ExperienceCard from '@/components/profile/ExperienceCard';
 import EducationCard from '@/components/profile/EducationCard';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function ProfilePage() {
+  const router = useRouter();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const currentUser = users[0]; // Static current user
   const aboutText = `Passionate software engineer with expertise in React, Next.js, and TypeScript. 
 Love building scalable web applications and sharing knowledge with the developer community.`;
@@ -31,6 +38,29 @@ Love building scalable web applications and sharing knowledge with the developer
     current: false,
   };
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
