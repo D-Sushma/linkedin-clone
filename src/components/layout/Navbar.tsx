@@ -18,6 +18,7 @@ import {
 import { FaLinkedin } from "react-icons/fa";
 import { users } from '@/lib/data';
 import Button from '../common/Button';
+import { useAuth } from '@/hooks/useAuth';
 
 interface NavbarProps {
   activeTab?: 'home' | 'network' | 'jobs' | 'messages';
@@ -27,14 +28,11 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
   const router = useRouter();
   const [showMeDropdown, setShowMeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { user, logout } = useAuth();
   const currentUser = users[0];
   
   const handleSignOut = () => {
-    // Clear authentication
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('linkedin_user');
-      localStorage.removeItem('linkedin_authenticated');
-    }
+    logout();
     // Redirect to login page
     router.push('/login');
   };
@@ -44,21 +42,8 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
   const firstName = nameParts[0];
   const lastName = nameParts.slice(1).join(' ');
 
-  // const storedUser = JSON.parse(localStorage.getItem('linkedin_user'));
-  // Use lazy initializer to safely access localStorage
-  const [storedUser] = useState<{ name?: string; [key: string]: unknown } | null>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const userData = localStorage.getItem('linkedin_user');
-        if (userData) {
-          return JSON.parse(userData);
-        }
-      } catch (error) {
-        console.error('Error reading from localStorage:', error);
-      }
-    }
-    return null;
-  });
+  // Use authenticated user from useAuth hook, fallback to static user
+  const displayUser = user || currentUser;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -147,8 +132,8 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
                               {currentUser.avatar}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 text-sm">{storedUser?.name || `${firstName} ${lastName}`}</h3>
-                              <p className="text-xs text-gray-600 mt-1">{currentUser.title}</p>
+                              <h3 className="font-semibold text-gray-900 text-sm">{displayUser.name}</h3>
+                              <p className="text-xs text-gray-600 mt-1">{displayUser.title}</p>
                             </div>
                           </div>
                            <div className="flex gap-2">

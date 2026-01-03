@@ -1,39 +1,16 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { users } from '@/lib/data';
 import { HiBookmark, HiUserGroup, HiNewspaper, HiCalendar } from 'react-icons/hi';
-
-interface StoredUser {
-  name?: string;
-  avatar?: string;
-  [key: string]: unknown;
-}
+import { useAuth } from '@/hooks/useAuth';
 
 export default function HomeSidebar() {
+  const { user } = useAuth();
   const currentUser = users[0]; // Static current user
   
-  // Split name into first and last name
-  const nameParts = currentUser.name.split(' ');
-  const firstName = nameParts[0];
-  const lastName = nameParts.slice(1).join(' ');
-
-  // Use lazy initializer to safely access localStorage
-  const [storedUser] = useState<StoredUser | null>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const userData = localStorage.getItem('linkedin_user');
-        if (userData) {
-          return JSON.parse(userData) as StoredUser;
-        }
-      } catch (error) {
-        console.error('Error reading from localStorage:', error);
-      }
-    }
-    return null;
-  });
-  // console.log("storedUser...", storedUser);
+  // Use authenticated user from useAuth hook, fallback to static user
+  const displayUser = user || currentUser;
 
   return (
     <aside className="w-full lg:w-64 space-y-4 lg:sticky lg:top-20 h-fit">
@@ -43,12 +20,11 @@ export default function HomeSidebar() {
         <div className="bg-gradient-to-r from-blue-500 to-blue-700 h-16"></div>
         <div className="px-4 pb-4 -mt-8">
           <div className="w-16 h-16 bg-white rounded-full border-4 border-white flex items-center justify-center text-3xl mb-3">
-            {storedUser?.avatar || currentUser.avatar}
+            {displayUser.avatar}
           </div>
-          {/* <h3 className="font-semibold text-gray-900 text-sm mb-1">{firstName} {lastName}</h3> */}
-          <h3 className="font-semibold text-gray-900 text-sm mb-1">{storedUser?.name || firstName + " " + lastName}</h3>
-          <p className="text-xs text-gray-600 mb-2">{currentUser.title}</p>
-          <p className="text-xs text-gray-500">{currentUser.location}</p>
+          <h3 className="font-semibold text-gray-900 text-sm mb-1">{displayUser.name}</h3>
+          <p className="text-xs text-gray-600 mb-2">{displayUser.title}</p>
+          <p className="text-xs text-gray-500">{displayUser.location}</p>
         </div>
       </div>
 

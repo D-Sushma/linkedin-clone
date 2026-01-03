@@ -32,46 +32,24 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Verify authentication with backend instead of trusting localStorage
-    const verifyAuth = async () => {
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('linkedin_token');
-        
-        // If no token exists, user is not authenticated
-        if (!token) {
-          setIsLoading(false);
-          return;
-        }
-
+    // Check localStorage for authentication
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('linkedin_user');
+      console.log("storedUser...", storedUser);
+      
+      if (storedUser) {
         try {
-          // Verify token with backend
-          const response = await api.get('/auth/me');
-          
-          if (response.data.success) {
-            const backendUser = response.data.user;
-            const transformedUser = transformUser(backendUser);
-            setUser(transformedUser);
-            
-            // Update localStorage with fresh user data
-            localStorage.setItem('linkedin_user', JSON.stringify(transformedUser));
-          } else {
-            // Token invalid, clear storage
-            localStorage.removeItem('linkedin_user');
-            localStorage.removeItem('linkedin_token');
-            setUser(null);
-          }
-        } catch (error: unknown) {
-          // Token invalid or expired, clear storage
-          console.error('Auth verification failed:', error);
+          const userData = JSON.parse(storedUser);
+          setUser(userData);
+        } catch (error) {
+          console.error('Error parsing stored user:', error);
+          // Clear invalid data
           localStorage.removeItem('linkedin_user');
           localStorage.removeItem('linkedin_token');
-          setUser(null);
         }
       }
-      setIsLoading(false);
-    };
-
-    verifyAuth();
+    }
+    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<User> => {
@@ -98,10 +76,8 @@ export function useAuth() {
       } else {
         throw new Error(response.data.message || 'Login failed');
       }
-    } catch (error: unknown) {
-      const errorMessage = (error as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message || 
-                          (error as { message?: string })?.message || 
-                          'Login failed';
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
       throw new Error(errorMessage);
     }
   };
@@ -131,10 +107,8 @@ export function useAuth() {
       } else {
         throw new Error(response.data.message || 'Registration failed');
       }
-    } catch (error: unknown) {
-      const errorMessage = (error as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message || 
-                          (error as { message?: string })?.message || 
-                          'Registration failed';
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
       throw new Error(errorMessage);
     }
   };
