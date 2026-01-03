@@ -11,12 +11,16 @@ import { fetchPostsFromAPI } from '@/lib/api';
 import { usePosts } from '@/hooks/usePosts';
 
 export default function Home() {
+  // First feed: DummyJSON API posts
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Second feed: Backend API posts (usePosts hook)
+  const { posts: backendPosts, isLoading: isLoadingBackend, error: backendError, fetchPosts } = usePosts();
+
+  // Fetch DummyJSON posts on mount
   useEffect(() => {
-    // Fetch posts from API
     const loadPosts = async () => {
       try {
         setIsLoading(true);
@@ -34,9 +38,6 @@ export default function Home() {
     loadPosts();
   }, []);
 
-   // Use separate state from usePosts hook for backend API posts
-   const { posts: backendPosts, isLoading: isLoadingBackend, error: backendError } = usePosts();
-
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -53,8 +54,9 @@ export default function Home() {
 
           {/* Center Feed - Main Content */}
           <main className="flex-1 min-w-0 order-2 lg:order-0">
-            <CreatePost />
+            <CreatePost onPostCreated={fetchPosts} />
 
+            {/* First Feed: DummyJSON API Posts */}
             {/* Loading State */}
             {isLoading && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center mt-6">
@@ -70,7 +72,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* Posts Feed */}
+            {/* Posts Feed from DummyJSON API */}
             {!isLoading && !error && (
               <div className="space-y-6 mt-6">
                 {posts.length > 0 ? (
@@ -84,7 +86,9 @@ export default function Home() {
                 )}
               </div>
             )}
-{/* ======================================================== */}
+
+            {/* ======================================================== */}
+            {/* Second Feed: Backend API Posts */}
             {/* posts feed fetches from backend api */}
             {/* Posts Feed from Backend API */}
             {isLoadingBackend && (

@@ -4,7 +4,11 @@ import { useState, useEffect } from 'react';
 import Avatar from '../common/Avatar';
 import { usePosts } from '@/hooks/usePosts';
 
-export default function CreatePost() {
+interface CreatePostProps {
+  onPostCreated?: () => void | Promise<void>;
+}
+
+export default function CreatePost({ onPostCreated }: CreatePostProps) {
   const [content, setContent] = useState('');
   const [image, setImage] = useState('');
   const { addPost, isLoading } = usePosts();
@@ -19,6 +23,10 @@ export default function CreatePost() {
       setContent('');
       setImage('');
       setMessage('Post created successfully');
+      // Call the callback to refresh posts in parent component
+      if (onPostCreated) {
+        onPostCreated();
+      }
     }
   };
 
