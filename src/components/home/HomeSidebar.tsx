@@ -1,6 +1,15 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import { users } from '@/lib/data';
 import { HiBookmark, HiUserGroup, HiNewspaper, HiCalendar } from 'react-icons/hi';
+
+interface StoredUser {
+  name?: string;
+  avatar?: string;
+  [key: string]: unknown;
+}
 
 export default function HomeSidebar() {
   const currentUser = users[0]; // Static current user
@@ -10,7 +19,20 @@ export default function HomeSidebar() {
   const firstName = nameParts[0];
   const lastName = nameParts.slice(1).join(' ');
 
-  const storedUser = JSON.parse(localStorage.getItem('linkedin_user'));
+  // Use lazy initializer to safely access localStorage
+  const [storedUser] = useState<StoredUser | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const userData = localStorage.getItem('linkedin_user');
+        if (userData) {
+          return JSON.parse(userData) as StoredUser;
+        }
+      } catch (error) {
+        console.error('Error reading from localStorage:', error);
+      }
+    }
+    return null;
+  });
   // console.log("storedUser...", storedUser);
 
   return (
@@ -21,7 +43,7 @@ export default function HomeSidebar() {
         <div className="bg-gradient-to-r from-blue-500 to-blue-700 h-16"></div>
         <div className="px-4 pb-4 -mt-8">
           <div className="w-16 h-16 bg-white rounded-full border-4 border-white flex items-center justify-center text-3xl mb-3">
-            {storedUser?.avatar ||currentUser.avatar}
+            {storedUser?.avatar || currentUser.avatar}
           </div>
           {/* <h3 className="font-semibold text-gray-900 text-sm mb-1">{firstName} {lastName}</h3> */}
           <h3 className="font-semibold text-gray-900 text-sm mb-1">{storedUser?.name || firstName + " " + lastName}</h3>

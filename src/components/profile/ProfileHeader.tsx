@@ -1,4 +1,6 @@
 'use client';
+
+import { useState } from 'react';
 import { User } from '@/types';
 import Avatar from '../common/Avatar';
 import Button from '../common/Button';
@@ -8,8 +10,26 @@ interface ProfileHeaderProps {
   isOwnProfile?: boolean;
 }
 
+interface StoredUser {
+  name?: string;
+  [key: string]: unknown;
+}
+
 export default function ProfileHeader({ user, isOwnProfile = false }: ProfileHeaderProps) {
-  const storedUser = JSON.parse(localStorage.getItem('linkedin_user'));
+  // Use lazy initializer to safely access localStorage
+  const [storedUser] = useState<StoredUser | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const userData = localStorage.getItem('linkedin_user');
+        if (userData) {
+          return JSON.parse(userData) as StoredUser;
+        }
+      } catch (error) {
+        console.error('Error reading from localStorage:', error);
+      }
+    }
+    return null;
+  });
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
       {/* Banner */}

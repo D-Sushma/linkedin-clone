@@ -44,7 +44,21 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
   const firstName = nameParts[0];
   const lastName = nameParts.slice(1).join(' ');
 
-  const storedUser = JSON.parse(localStorage.getItem('linkedin_user'));
+  // const storedUser = JSON.parse(localStorage.getItem('linkedin_user'));
+  // Use lazy initializer to safely access localStorage
+  const [storedUser] = useState<{ name?: string; [key: string]: unknown } | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const userData = localStorage.getItem('linkedin_user');
+        if (userData) {
+          return JSON.parse(userData);
+        }
+      } catch (error) {
+        console.error('Error reading from localStorage:', error);
+      }
+    }
+    return null;
+  });
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -133,7 +147,7 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
                               {currentUser.avatar}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 text-sm">{storedUser?.name || firstName + "" + lastName}</h3>
+                              <h3 className="font-semibold text-gray-900 text-sm">{storedUser?.name || `${firstName} ${lastName}`}</h3>
                               <p className="text-xs text-gray-600 mt-1">{currentUser.title}</p>
                             </div>
                           </div>
