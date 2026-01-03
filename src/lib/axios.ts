@@ -34,9 +34,18 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Unauthorized - clear auth data
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('linkedin_user');
-        localStorage.removeItem('linkedin_token');
-        window.location.href = '/login';
+        const currentPath = window.location.pathname;
+        // Only redirect to login if we're not already on login/register page
+        // This prevents page refresh when login fails
+        if (currentPath !== '/login' && currentPath !== '/register') {
+          localStorage.removeItem('linkedin_user');
+          localStorage.removeItem('linkedin_token');
+          window.location.href = '/login';
+        } else {
+          // If we're on login/register page, just clear storage but don't redirect
+          localStorage.removeItem('linkedin_user');
+          localStorage.removeItem('linkedin_token');
+        }
       }
     }
     return Promise.reject(error);
