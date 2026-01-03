@@ -44,6 +44,8 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
   const firstName = nameParts[0];
   const lastName = nameParts.slice(1).join(' ');
 
+  const storedUser = JSON.parse(localStorage.getItem('linkedin_user'));
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -70,7 +72,7 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center justify-between">
+        <div className="lg:flex lg:items-center lg:justify-between">
           <div className='flex items-center gap-2'>
 
           {/* LinkedIn Logo */}
@@ -80,7 +82,7 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
           </Link>
 
           {/* Search Box */}
-          <div className="hidden md:flex flex-1 max-w-md mx-4">
+          <div className="hidden-none md:flex flex-1 max-w-md mx-4">
             <div className="relative w-full">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <HiSearch className="text-gray-400 w-5 h-5" />
@@ -95,7 +97,7 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
           </div>
 
           {/* Navigation Items */}
-          <nav className="flex items-center gap-2 flex-1 md:flex-none md:justify-end">
+          <nav className="flex flex-wrap items-center lg:gap-2 flex-1 md:flex-none md:justify-end ">
             {navItems.map((item) => {
               const isActive = activeTab === item.key;
               const IconComponent = item.icon;
@@ -123,7 +125,7 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
 
                     {/* Dropdown Menu */}
                     {showMeDropdown && (
-                      <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                      <div className="absolute left-3/3 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] md:w-80 max-w-[320px] md:max-w-none bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-[calc(100vh-6rem)] overflow-y-auto">
                         {/* Profile Section */}
                         <div className="p-4 border-b border-gray-200">
                           <div className="flex items-start gap-3 mb-4">
@@ -131,8 +133,7 @@ export default function Navbar({ activeTab = 'home' }: NavbarProps) {
                               {currentUser.avatar}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 text-sm">{firstName}</h3>
-                              <h3 className="font-semibold text-gray-900 text-sm">{lastName}</h3>
+                              <h3 className="font-semibold text-gray-900 text-sm">{storedUser?.name || firstName + "" + lastName}</h3>
                               <p className="text-xs text-gray-600 mt-1">{currentUser.title}</p>
                             </div>
                           </div>

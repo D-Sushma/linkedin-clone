@@ -82,9 +82,9 @@ export default function NetworkPage() {
       
       {/* Main Container with max-w-6xl */}
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex gap-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Left Sidebar - Manage my network */}
-          <div className="hidden lg:block">
+          <div className="hidden-none lg:block w-full lg:w-auto lg:shrink-0">
             <NetworkSidebar />
           </div>
 

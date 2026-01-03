@@ -35,6 +35,7 @@ export function useAuth() {
     // Check localStorage for authentication
     if (typeof window !== 'undefined') {
       const storedUser = localStorage.getItem('linkedin_user');
+      console.log("storedUser...", storedUser);
       
       if (storedUser) {
         try {

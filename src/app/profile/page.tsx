@@ -31,12 +31,13 @@ Love building scalable web applications and sharing knowledge with the developer
     current: false,
   };
 
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
       <main className="max-w-4xl mx-auto px-4 py-8">
-        <ProfileHeader user={currentUser} isOwnProfile={true} />
+        <ProfileHeader user={currentUser}  isOwnProfile={true} />
         <AboutSection about={aboutText} isOwnProfile={true} />
         <ProfileInfo user={currentUser} />
 

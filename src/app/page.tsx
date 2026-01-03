@@ -44,14 +44,15 @@ export default function Home() {
 
       {/* Main Container with max-w-6xl */}
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex gap-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Left Sidebar - Profile & Quick Links */}
-          <div className="hidden lg:block">
+          {/* <div className="hidden lg:block"> */}
+          <div className="w-full lg:w-auto lg:shrink-0">
             <HomeSidebar />
           </div>
 
           {/* Center Feed - Main Content */}
-          <main className="flex-1 min-w-0">
+          <main className="flex-1 min-w-0 order-2 lg:order-0">
             <CreatePost />
 
             {/* Loading State */}
@@ -118,7 +119,8 @@ export default function Home() {
           </main>
 
           {/* Right Widgets - LinkedIn News */}
-          <div className="hidden xl:block">
+          {/* <div className="hidden lg:block"> */}
+          <div className="w-full lg:w-auto lg:shrink-0 order-3 lg:order-0">
             <Widgets />
           </div>
         </div>

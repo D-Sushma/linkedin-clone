@@ -30,7 +30,7 @@ export default function Widgets() {
   ];
 
   return (
-    <aside className="w-64 space-y-4 sticky top-20 h-fit">
+    <aside className="w-full lg:w-64 space-y-4 lg:sticky lg:top-20 h-fit">
       {/* LinkedIn News Widget */}
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <div className="flex items-center gap-2 mb-4">

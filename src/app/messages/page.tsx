@@ -16,14 +16,14 @@ export default function MessagesPage() {
       
       {/* Main Container with max-w-6xl */}
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex gap-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Messages Card - Split Layout */}
           <div className="flex-1 bg-white rounded-lg border border-gray-200">
             {/* Header */}
             <div className="p-4 border-b border-gray-200">
               
               {/* Search Bar and Icons Row */}
-              <div className="flex items-center justify-center gap-2 mb-2">
+              <div className="flex flex-wrap items-center justify-center lg:gap-2 mb-2">
               <h1 className="text-md font-semibold text-gray-900">Messaging</h1>
                 <div className="flex-1 relative">
                   <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -87,7 +87,7 @@ export default function MessagesPage() {
           </div>
 
           {/* Right Side - Image and Links */}
-          <div className="hidden lg:block w-80 space-y-4">
+          <div className="hidden-none lg:block w-full lg:w-80 space-y-4">
             {/* Image */}
             <div className="bg-white rounded-lg border border-gray-200 p-2">
               <img

@@ -3,7 +3,7 @@ import { HiUserGroup, HiUsers, HiUserAdd, HiCalendar, HiNewspaper, HiCollection 
 
 export default function NetworkSidebar() {
   return (
-    <aside className="w-64 space-y-4 sticky top-20 h-fit">
+    <aside className="w-full lg:w-64 space-y-4 md:sticky md:top-20 h-fit">
       <div className="bg-white rounded-lg border border-gray-200 p-4">
         <h3 className="font-semibold text-gray-900 text-lg mb-4">Manage my network</h3>
         

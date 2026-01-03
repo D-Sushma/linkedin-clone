@@ -10,17 +10,21 @@ export default function HomeSidebar() {
   const firstName = nameParts[0];
   const lastName = nameParts.slice(1).join(' ');
 
+  const storedUser = JSON.parse(localStorage.getItem('linkedin_user'));
+  // console.log("storedUser...", storedUser);
+
   return (
-    <aside className="w-64 space-y-4 sticky top-20 h-fit">
+    <aside className="w-full lg:w-64 space-y-4 lg:sticky lg:top-20 h-fit">
       {/* Profile Card */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {/* Profile Picture */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-700 h-16"></div>
         <div className="px-4 pb-4 -mt-8">
           <div className="w-16 h-16 bg-white rounded-full border-4 border-white flex items-center justify-center text-3xl mb-3">
-            {currentUser.avatar}
+            {storedUser?.avatar ||currentUser.avatar}
           </div>
-          <h3 className="font-semibold text-gray-900 text-sm mb-1">{firstName} {lastName}</h3>
+          {/* <h3 className="font-semibold text-gray-900 text-sm mb-1">{firstName} {lastName}</h3> */}
+          <h3 className="font-semibold text-gray-900 text-sm mb-1">{storedUser?.name || firstName + " " + lastName}</h3>
           <p className="text-xs text-gray-600 mb-2">{currentUser.title}</p>
           <p className="text-xs text-gray-500">{currentUser.location}</p>
         </div>

@@ -1,3 +1,4 @@
+'use client';
 import { User } from '@/types';
 import Avatar from '../common/Avatar';
 import Button from '../common/Button';
@@ -8,6 +9,7 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ user, isOwnProfile = false }: ProfileHeaderProps) {
+  const storedUser = JSON.parse(localStorage.getItem('linkedin_user'));
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
       {/* Banner */}
@@ -20,7 +22,7 @@ export default function ProfileHeader({ user, isOwnProfile = false }: ProfileHea
             {user.avatar}
           </div>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">{user.name}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-1">{storedUser?.name || user.name}</h1>
         <p className="text-lg text-gray-600 mb-2">{user.title}</p>
         <p className="text-sm text-gray-500 mb-4">
           {user.location} • {user.connections} connections
